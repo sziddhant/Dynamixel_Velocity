@@ -1,1 +1,52 @@
-This is the readme file
+# Velocity controller for Dynamixel motors in ROS#
+
+This repository contains ROS packages and a Simulink example to control dynamixel motors with velocity commands. It was tested on MX-28 and MX-64 motors. We are using ROS Indigo and Matlab 2015a on Ubuntu 14.04. This pkg is intended to be used on a Cyton Gamma 1500 robot arm.
+
+## PKG overview ##
+
+**dynamixel_motor**: this is a modified dynamixel motor driver ([original source](https://github.com/arebgun/dynamixel_motor)), we extended with a velocity controller for a single motor `joint_speed_controller.py` and one for controlling multiple motor's velocities `joint_speed_controller_multi_motor.py`. The second one sends the command for each motor at the same time. This requires a spacial massage that contains two vector one with motor names and another with velocity cmd values, see `MotorVelocityArray.msg`. 
+The motors must be in wheel mode (cw and ccw are set to 0). As this pkg collection is used on a robot arm where we have physical joint angle limits, we introduced a new parameter for upper and lower angle limits: `maxAngle` and `minAngle`.
+
+**cyton_multi_speed_dynamixel**: this creates the velocity control spanner and manager nodes, there are two examples one for a single motor and another for two motors. Note that the joint specification sets obligatory `min: 0` and `max: 0`, so the motors are used in wheel mode. Use `minAngle` and `maxAngle` to set joint angle limits. 
+
+**speedTester**: this pkg has two nodes one for sending control massages and another for data logging.
+
+**PID_controlledPosiotioning**: this is a Simulink example of a PID controller. The PID gains are not well tuned, the I gain is 0 because the reference is the position while the command signal is the velocity (the system already has an integrator)
+
+## Usage ##
+
+Set a motor to wheel mode:
+
+```
+#!BASH\
+$ rosrun dynamixel_driver set_servo_config.py --port=/dev/ttyUSB0 -b 1000000 --cw-angle-limit=0 --ccw-angle-limit=0 $MOTOR_ID
+```
+
+Start the two motor controller:
+
+```
+#!bash
+$ roslaunch cyton_multi_speed_dynamixel speed_controller_2motors.launch
+
+```
+
+Run velocity command publisher and data logger:
+
+```
+#!bash
+$ rosrun speedTester speedTester_crt
+$ rosrun speedTester speedTester_log
+```
+
+Publish a command velocity msg for two motors:
+
+```
+#!bash
+$ rostopic pub -1 /cyton_multi_joint_speed_controller/command dynamixel_msgs/MotorVelocityArray "{joint_name:['wrist_roll_joint', 'wrist_pitch_joint'], vel_cmd:[-0.2, 0.1]}"
+```
+**Note**: after publishing a velocity command, the motor will rotate at the requested speed until receives an other command or reaches and angle limit. 
+
+## Contact ##
+Elod Pall
+
+[website](https://sites.google.com/site/timecontroll/home)
