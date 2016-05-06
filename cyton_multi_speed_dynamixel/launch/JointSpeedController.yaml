@@ -1,0 +1,15 @@
+wrist_roll_speed_controller:
+    controller:
+        package: dynamixel_controllers
+        module: joint_speed_controller
+        type: JointSpeedController
+    joint_name: wrist_roll_joint
+    joint_speed: 5.0
+    motor:
+        id: 0
+        init: 2049
+        min: 0
+        max: 0
+        minAngle: 351
+        maxAngle: 3747
+
