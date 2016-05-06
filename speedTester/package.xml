@@ -2,7 +2,7 @@
 <package>
   <name>speedTester</name>
   <version>0.0.0</version>
-  <description>The speedTester package</description>
+  <description>The speedTester package with cmd vel publisher and a data logger</description>
   <maintainer email="pall.elod@gmail.com">elod</maintainer>
   <license>BSD</license>
 
