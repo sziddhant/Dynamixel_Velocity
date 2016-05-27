@@ -44,7 +44,7 @@ Publish a command velocity msg for two motors:
 #!bash
 $ rostopic pub -1 /cyton_multi_joint_speed_controller/command dynamixel_msgs/MotorVelocityArray "{joint_name:['wrist_roll_joint', 'wrist_pitch_joint'], vel_cmd:[-0.2, 0.1]}"
 ```
-**Note**: after publishing a velocity command, the motor will rotate at the requested speed until receives an other command or reaches and angle limit. 
+**Note**: after publishing a velocity command, the motor will rotate at the requested speed until receives another command or reaches an angle limit. If the motor is going to be used in position control, change CW and CCW values from (0,0) to the original one. 
 
 ## Contact ##
 Elod Pall
