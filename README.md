@@ -5,7 +5,12 @@ This repository contains ROS packages and a Simulink example to control dynamixe
 ## PKG overview ##
 
 **dynamixel_motor**: this is a modified dynamixel motor driver ([original source](https://github.com/arebgun/dynamixel_motor)), we extended with a velocity controller for a single motor `joint_speed_controller.py` and one for controlling multiple motor's velocities `joint_speed_controller_multi_motor.py`. The second one sends the command for each motor at the same time. This requires a spacial massage that contains two vector one with motor names and another with velocity cmd values, see `MotorVelocityArray.msg`. 
-The motors must be in wheel mode (cw and ccw are set to 0). As this pkg collection is used on a robot arm where we have physical joint angle limits, we introduced a new parameter for upper and lower angle limits: `maxAngle` and `minAngle`.
+The motors must be in wheel mode (cw and ccw are set to 0). As this pkg collection is used on a robot arm where we have physical joint angle limits, we introduced a new parameter for upper and lower angle limits: `maxAngle` and `minAngle`. If the two parameters are equal, then the driver wont have any angle limitations so the motor can spin continuously.
+
+*emulated torque drivers*: two torque drivers are added `joint_emulated_torque_controller.py` and `joint_emulated_torque_controllerV2.py`. These drivers are not yet tested and confirmed that they apply approximately the desired torque. Motor and parameter calibration is needed, see reference [publication](http://shervinemami.info/dynamixel_study_by_ett.pdf)
+
+* `joint_emulated_torque_controller.py` emulate torque in “free spin” mode by using velocity control
+* `joint_emulated_torque_controllerV2.py` emulate torque in position control by adjusting the max torque limit and the punch (no feedback adjustment is implemented)  
 
 **cyton_multi_speed_dynamixel**: this creates the velocity control spanner and manager nodes, there are two examples one for a single motor and another for two motors. Note that the joint specification sets obligatory `min: 0` and `max: 0`, so the motors are used in wheel mode. Use `minAngle` and `maxAngle` to set joint angle limits. 
 
