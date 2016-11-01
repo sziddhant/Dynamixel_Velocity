@@ -1,6 +1,6 @@
 # Velocity controller for Dynamixel motors in ROS#
 
-This repository contains ROS packages and a Simulink example to control dynamixel motors with velocity commands. It was tested on MX-28 and MX-64 motors. We are using ROS Indigo and Matlab 2015a on Ubuntu 14.04. This pkg is intended to be used on a Cyton Gamma 1500 robot arm.
+This repository contains ROS packages and a Simulink example to control dynamixel motors with velocity commands. It was tested on AX12-A, MX-28, and MX-64 motors. We are using ROS Indigo and Matlab 2015a on Ubuntu 14.04. This pkg is intended to be used on a Cyton Gamma 1500 robot arm.
 
 ## PKG overview ##
 
