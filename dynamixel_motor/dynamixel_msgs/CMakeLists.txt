@@ -10,6 +10,7 @@ add_message_files(
   MotorState.msg
   MotorStateList.msg
   MotorVelocityArray.msg
+  MotorTorqueArray.msg
 )
 
 generate_messages(

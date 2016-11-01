@@ -63,6 +63,7 @@ class JointSpeedController(JointController):
         self.max_angle_raw = rospy.get_param(self.controller_namespace + '/motor/max')
         self.min_angle_treshold = rospy.get_param(self.controller_namespace + '/motor/minAngle')
         self.max_angle_treshold = rospy.get_param(self.controller_namespace + '/motor/maxAngle')
+        self.tau_to_vel = rospy.get_param(self.controller_namespace + '/motor/TauToVelocity')
         
         if rospy.has_param(self.controller_namespace + '/motor/acceleration'):
             self.acceleration = rospy.get_param(self.controller_namespace + '/motor/acceleration')
@@ -221,21 +222,20 @@ class JointSpeedController(JointController):
                 
                 self.joint_state_pub.publish(self.joint_state)
                 
-# Encoder position and tick velocity based limitation 
-                if (slef.max_angle_treshold != slef.min_angle_treshold):                 
-                    if (self.joint_state.velocity > 0 and  abs(self.max_angle_treshold - 100) <  (state.position + state.speed * 1.0/20.0) ):
-                        print "Joint reach its limit "  + str(self.max_angle_treshold) + " at " + str(state.position) + " state speed " + str(state.speed)
-                        self.dxl_io.set_speed(self.motor_id, 0)
-                        self.at_max_angle = True
-                    elif self.joint_state.velocity != 0 :
-                        self.at_max_angle = False
-                                 
-                    if (self.joint_state.velocity < 0 and abs(self.min_angle_treshold +100) > (state.position + state.speed * 1.0/20.0) ):
-                        print "Joint reach its limit " + str(self.min_angle_treshold) + " at " + str(state.position) + " vel " + str(state.speed)
-                        self.dxl_io.set_speed(self.motor_id, 0)
-                        self.at_min_angle = True
-                    elif self.joint_state.velocity != 0 :
-                        self.at_min_angle = False    
+# Encoder position and tick velocity based limitation                  
+                if (self.joint_state.velocity > 0 and  abs(self.max_angle_treshold - 100) <  (state.position + state.speed * 1.0/20.0) ):
+                    print "Joint reach its limit "  + str(self.max_angle_treshold) + " at " + str(state.position) + " state speed " + str(state.speed)
+                    self.dxl_io.set_speed(self.motor_id, 0)
+                    self.at_max_angle = True
+                elif self.joint_state.velocity != 0 :
+                    self.at_max_angle = False
+                             
+                if (self.joint_state.velocity < 0 and abs(self.min_angle_treshold +100) > (state.position + state.speed * 1.0/20.0) ):
+                    print "Joint reach its limit " + str(self.min_angle_treshold) + " at " + str(state.position) + " vel " + str(state.speed)
+                    self.dxl_io.set_speed(self.motor_id, 0)
+                    self.at_min_angle = True
+                elif self.joint_state.velocity != 0 :
+                    self.at_min_angle = False    
 
 # radian and radian/sec based limitation 
 #                 if (self.joint_state.velocity > 0 and  abs(self.max_angle_treshold - (state.position + state.speed * 1.0/20.0))  < 10):
@@ -256,7 +256,7 @@ class JointSpeedController(JointController):
         
 
     def process_command(self, msg):
-        speed = self.spd_rad_to_raw(msg.data)
+        speed = self.spd_rad_to_raw(msg.data * slef.tau_to_vel)
 	print speed
         mcv = (self.motor_id, speed)
         self.dxl_io.set_speed(self.motor_id, speed)

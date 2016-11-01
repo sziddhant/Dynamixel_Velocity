@@ -35,35 +35,34 @@
 from __future__ import division
 
 
-
-__author__ = 'Antons Rebguns'
-__copyright__ = 'Copyright (c) 2010-2011 Antons Rebguns'
+__author__ = 'Elod Pall'
+__copyright__ = 'Copyright (c) 2016-2017 Elod Pall'
 __credits__ = 'Cara Slutter'
 
 __license__ = 'BSD'
-__maintainer__ = 'Antons Rebguns'
-__email__ = 'anton@email.arizona.edu'
+__maintainer__ = 'Elod Pall'
+__email__ = 'pall.elod@gmail.com'
 
 
 import rospy
-
 
 from dynamixel_driver.dynamixel_const import *
 from dynamixel_controllers.joint_controller import JointController
 
 from dynamixel_msgs.msg import JointState
 
-class JointSpeedController(JointController):
+class JointEmulatedTorqueController(JointController):
     def __init__(self, dxl_io, controller_namespace, port_namespace):
         JointController.__init__(self, dxl_io, controller_namespace, port_namespace)
         
+	self.msg = 0 # in order to keep the torque up and running we need to save this value.
         self.motor_id = rospy.get_param(self.controller_namespace + '/motor/id')
         self.initial_position_raw = rospy.get_param(self.controller_namespace + '/motor/init')
         self.min_angle_raw = rospy.get_param(self.controller_namespace + '/motor/min')
         self.max_angle_raw = rospy.get_param(self.controller_namespace + '/motor/max')
         self.min_angle_treshold = rospy.get_param(self.controller_namespace + '/motor/minAngle')
         self.max_angle_treshold = rospy.get_param(self.controller_namespace + '/motor/maxAngle')
-        
+       
         if rospy.has_param(self.controller_namespace + '/motor/acceleration'):
             self.acceleration = rospy.get_param(self.controller_namespace + '/motor/acceleration')
         else:
@@ -72,7 +71,6 @@ class JointSpeedController(JointController):
         self.flipped = self.min_angle_raw > self.max_angle_raw
         
         self.joint_state = JointState(name=self.joint_name, motor_ids=[self.motor_id])
-	   
 
     def initialize(self):
         # verify that the expected motor is connected and responding
@@ -85,10 +83,6 @@ class JointSpeedController(JointController):
             
         self.RADIANS_PER_ENCODER_TICK = rospy.get_param('dynamixel/%s/%d/radians_per_encoder_tick' % (self.port_namespace, self.motor_id))
         self.ENCODER_TICKS_PER_RADIAN = rospy.get_param('dynamixel/%s/%d/encoder_ticks_per_radian' % (self.port_namespace, self.motor_id))
-        
-        self.joint_angle_raw = 0
-        self.at_max_angle = False
-        self.at_min_angle = False
         
         if self.flipped:
             self.min_angle = (self.initial_position_raw - self.min_angle_raw) * self.RADIANS_PER_ENCODER_TICK
@@ -120,11 +114,7 @@ class JointSpeedController(JointController):
         elif self.joint_speed > self.joint_max_speed: self.joint_speed = self.joint_max_speed
         
         self.set_speed(self.joint_speed)
-        self.dxl_io.set_speed(self.motor_id, 0)
-        
-        #self.max_angle_treshold = self.raw_to_rad(self.max_angle_treshold, self.initial_position_raw, self.flipped, self.RADIANS_PER_ENCODER_TICK)        
-        #self.min_angle_treshold = self.raw_to_rad(self.min_angle_treshold, self.initial_position_raw, self.flipped, self.RADIANS_PER_ENCODER_TICK)
-        
+        self.direction = 0
         return True
 
     def pos_rad_to_raw(self, pos_rad):
@@ -133,36 +123,10 @@ class JointSpeedController(JointController):
         return self.rad_to_raw(pos_rad, self.initial_position_raw, self.flipped, self.ENCODER_TICKS_PER_RADIAN)
 
     def spd_rad_to_raw(self, spd_rad):
-	# include negative values for direction
-        # if spd_rad < self.MIN_VELOCITY: spd_rad = self.MIN_VELOCITY	
-        #elif spd_rad > self.joint_max_speed: spd_rad = self.joint_max_speed
+        if spd_rad < self.MIN_VELOCITY: spd_rad = self.MIN_VELOCITY
+        elif spd_rad > self.joint_max_speed: spd_rad = self.joint_max_speed
         # velocity of 0 means maximum, make sure that doesn't happen
-        #return max(1, int(round(spd_rad / self.VELOCITY_PER_TICK)))
-        
-        # add angle limits, maybe new parameter need in yaml file    
-        if spd_rad == 0.0:
-            return 0
-
-        if self.at_max_angle and spd_rad > 0:
-            print "At end MX " + str(self.at_max_angle) 
-            return 0
-            
-        if self.at_min_angle and spd_rad < 0:
-            print "At end MN " + str(self.at_min_angle)
-            return 0          
-         
-        if spd_rad < -self.joint_max_speed: 
-            spd_rad = -self.joint_max_speed
-        elif spd_rad > self.joint_max_speed: 
-            spd_rad = self.joint_max_speed    
-                   
-        if spd_rad > 0:         
-            return max(1, int(round(spd_rad / self.VELOCITY_PER_TICK)))
-        elif spd_rad < 0:
-            return min(-1, int(round(spd_rad / self.VELOCITY_PER_TICK)))
-        
-            
-            
+        return max(1, int(round(spd_rad / self.VELOCITY_PER_TICK)))
 
     def set_torque_enable(self, torque_enable):
         mcv = (self.motor_id, torque_enable)
@@ -217,47 +181,44 @@ class JointSpeedController(JointController):
                 self.joint_state.load = state.load
                 self.joint_state.is_moving = state.moving
                 self.joint_state.header.stamp = rospy.Time.from_sec(state.timestamp)
-                self.joint_angle_raw = state.position
+		# insert code to generate a torque by applying a pos command - include direction 
+		# 0 torque - dont send command
+                #angle = 0
+                if (self.direction != 0):                            
+                    if (self.direction > 0):
+                        angle = 1023 #self.pos_rad_to_raw(self.joint_state.current_pos + 3.14159)
+                      #  print 'to positive'
+                    else:
+                        angle = 0 #self.pos_rad_to_raw(self.joint_state.current_pos - 3.14159)
+                       # print 'to negative'               
+                    if (self.min_angle_treshold < self.max_angle_treshold):                      
+                        if ((self.direction > 0) and  (self.joint_state.current_pos >= self.max_angle_treshold - 0.0349066)):
+                            angle = self.pos_rad_to_raw(self.joint_state.current_pos)
+                            print 'at max angle' 
+                        if ((self.direction < 0) and  (self.joint_state.current_pos <= self.min_angle_treshold + 0.0349066)):
+                            angle = self.pos_rad_to_raw(self.joint_state.current_pos)
+                            print 'at min angle'    
+                else: 
+                    angle = self.pos_rad_to_raw(self.joint_state.current_pos)
                 
+                self.joint_state.goal_pos = self.raw_to_rad(angle, self.initial_position_raw, self.flipped, self.RADIANS_PER_ENCODER_TICK)
+                # sending a position command with distant goal and high frequency 
+#                print "target " + str(angle)                  
+                mcv = (self.motor_id, angle)
+                self.dxl_io.set_multi_position([mcv])
                 self.joint_state_pub.publish(self.joint_state)
-                
-# Encoder position and tick velocity based limitation 
-                if (slef.max_angle_treshold != slef.min_angle_treshold):                 
-                    if (self.joint_state.velocity > 0 and  abs(self.max_angle_treshold - 100) <  (state.position + state.speed * 1.0/20.0) ):
-                        print "Joint reach its limit "  + str(self.max_angle_treshold) + " at " + str(state.position) + " state speed " + str(state.speed)
-                        self.dxl_io.set_speed(self.motor_id, 0)
-                        self.at_max_angle = True
-                    elif self.joint_state.velocity != 0 :
-                        self.at_max_angle = False
-                                 
-                    if (self.joint_state.velocity < 0 and abs(self.min_angle_treshold +100) > (state.position + state.speed * 1.0/20.0) ):
-                        print "Joint reach its limit " + str(self.min_angle_treshold) + " at " + str(state.position) + " vel " + str(state.speed)
-                        self.dxl_io.set_speed(self.motor_id, 0)
-                        self.at_min_angle = True
-                    elif self.joint_state.velocity != 0 :
-                        self.at_min_angle = False    
-
-# radian and radian/sec based limitation 
-#                 if (self.joint_state.velocity > 0 and  abs(self.max_angle_treshold - (state.position + state.speed * 1.0/20.0))  < 10):
-#                     print "Joint reach its limit "  + str(self.max_angle_treshold) + " at " + str(self.joint_state.current_pos) + " state speed " + str(self.joint_state.velocity)
-#                     self.dxl_io.set_speed(self.motor_id, 0)
-#                     self.at_max_angle = True
-#                 elif self.joint_state.velocity != 0 :
-#                     self.at_max_angle = False
-#                             
-#                 if (self.joint_state.velocity < 0 and abs(self.min_angle_treshold - (self.joint_state.current_pos + self.joint_state.velocity * 1.0/20.0)) < 0.052 ):
-#                     print "Joint reach its limit " + str(self.min_angle_treshold) + " at " + str(self.joint_state.current_pos) + " vel " + str(self.joint_state.velocity)
-#                     self.dxl_io.set_speed(self.motor_id, 0)
-#                     self.at_min_angle = True
-#                 elif self.joint_state.velocity != 0 :
-#                     self.at_min_angle = False    
-                     
-        
-        
 
     def process_command(self, msg):
-        speed = self.spd_rad_to_raw(msg.data)
-	print speed
-        mcv = (self.motor_id, speed)
-        self.dxl_io.set_speed(self.motor_id, speed)
+        torque_magnitude = msg.data
+        # set the torque limit
+        self.set_torque_limit(abs(torque_magnitude)*1.01)	
+        slef.process_set_compliance_punch(abs(torque_magnitude)*0.99)
+        self.direction = torque_magnitude 
+        print 'torque command %.2f' % (self.direction) 
+#	if torque_magnitude > 0
+#		angle = 1023
+#	if torque_magnitude < 0
+#		angle = 0
+#        mcv = (self.motor_id, angle)
+#        self.dxl_io.set_position([mcv])
 
