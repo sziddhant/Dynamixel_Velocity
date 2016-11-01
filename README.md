@@ -26,7 +26,7 @@ Set one motor to wheel mode:
 #!BASH\
 $ rosrun dynamixel_driver set_servo_config.py --port=/dev/ttyUSB0 -b 1000000 --cw-angle-limit=0 --ccw-angle-limit=0 $MOTOR_ID
 ```
-Change motor setup from position to wheel mode or vice-versa simply run `initMotors_pos.sh` or `initMotors_vel.sh` respectively.
+Change the setup for all the motors on the Cyton Gamma 1500 arm from position to wheel mode or vice-versa by simply running `initMotors_pos.sh` or `initMotors_vel.sh` script respectively.
 
 Start the two motor controller:
 
