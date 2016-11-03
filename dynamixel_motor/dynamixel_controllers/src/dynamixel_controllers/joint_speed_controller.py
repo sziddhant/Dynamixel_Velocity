@@ -222,7 +222,7 @@ class JointSpeedController(JointController):
                 self.joint_state_pub.publish(self.joint_state)
                 
 # Encoder position and tick velocity based limitation 
-                if (slef.max_angle_treshold != slef.min_angle_treshold):                 
+                if (self.max_angle_treshold != self.min_angle_treshold):                 
                     if (self.joint_state.velocity > 0 and  abs(self.max_angle_treshold - 100) <  (state.position + state.speed * 1.0/20.0) ):
                         print "Joint reach its limit "  + str(self.max_angle_treshold) + " at " + str(state.position) + " state speed " + str(state.speed)
                         self.dxl_io.set_speed(self.motor_id, 0)
