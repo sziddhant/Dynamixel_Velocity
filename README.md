@@ -9,7 +9,7 @@ The motors must be in wheel mode (cw and ccw are set to 0). As this pkg collecti
 
 *emulated torque drivers*: two torque drivers are added `joint_emulated_torque_controller.py` and `joint_emulated_torque_controllerV2.py`. These drivers are not yet tested and confirmed that they apply approximately the desired torque. Motor and parameter calibration is needed, see reference [publication](http://shervinemami.info/dynamixel_study_by_ett.pdf)
 
-* `joint_emulated_torque_controller.py` emulate torque in ‚Äúfree spin‚Äù mode by using velocity control
+* `joint_emulated_torque_controller.py` emulate torque in ìfree spinî mode by using velocity control
 * `joint_emulated_torque_controllerV2.py` emulate torque in position control by adjusting the max torque limit and the punch (no feedback adjustment is implemented)  
 
 **cyton_multi_speed_dynamixel**: this creates the velocity control spanner and manager nodes, there are two examples one for a single motor and another for two motors. Note that the joint specification sets obligatory `min: 0` and `max: 0`, so the motors are used in wheel mode. Use `minAngle` and `maxAngle` to set joint angle limits. 
@@ -55,4 +55,4 @@ $ rostopic pub -1 /cyton_multi_joint_speed_controller/command dynamixel_msgs/Mot
 ## Contact ##
 Elod Pall
 
-[website](https://sites.google.com/site/timecontroll/home)
+[website](https://sites.google.com/site/timecontrol/)
