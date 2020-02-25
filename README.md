@@ -12,21 +12,17 @@ The motors must be in wheel mode (cw and ccw are set to 0). As this pkg collecti
 
 ## Usage ##
 
-Set one motor to wheel mode:
-
-```
-$ rosrun dynamixel_driver set_servo_config.py --port=/dev/ttyUSB0 -b 1000000 --cw-angle-limit=0 --ccw-angle-limit=0 $MOTOR_ID
-```
+Set motors to wheel mode.
 Start the two motor controller:
 
 ```
-$ roslaunch cyton_multi_speed_dynamixel speed_controller_2motors.launch
+$ roslaunch multi_speed_dynamixel speed_controller_2motors.launch
 ```
 
 Publish a command velocity msg for two motors:
 
 ```
-$ rostopic pub -1 /cyton_multi_joint_speed_controller/command dynamixel_msgs/MotorVelocityArray "{joint_name:['wrist_roll_joint', 'wrist_pitch_joint'], vel_cmd:[-0.2, 0.1]}"
+$ rostopic pub -1 /multi_joint_speed_controller/command dynamixel_msgs/MotorVelocityArray "{joint_name:['wrist_roll_joint', 'wrist_pitch_joint'], vel_cmd:[-0.2, 0.1]}"
 ```
 **Note**: after publishing a velocity command, the motor will rotate at the requested speed until receives another command or reaches an angle limit. If the motor is going to be used in position control, change CW and CCW values from (0,0) to the original one. 
 
