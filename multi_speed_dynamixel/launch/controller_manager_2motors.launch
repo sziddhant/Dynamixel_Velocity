@@ -3,7 +3,7 @@
 <!-- motor feedback from available posrts -->
 
 <launch>
-    <node name="cyton_controller_manager" pkg="dynamixel_controllers" type="controller_manager.py" required="true" output="screen">
+    <node name="controller_manager" pkg="dynamixel_controllers" type="controller_manager.py" required="true" output="screen">
         <rosparam>
             namespace: dxl_manager
             serial_ports:

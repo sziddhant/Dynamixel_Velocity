@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <package>
-  <name>cyton_multi_speed_dynamixel</name>
+  <name>multi_speed_dynamixel</name>
   <version>0.0.0</version>
-  <description>The cyton_multi_sppeed_dynamixel package containing the configuration files for velocity control and an arm joint loc/unlock script.</description>
+  <description>The multi_speed_dynamixel package containing the configuration files for velocity control.</description>
 
-  <maintainer email="pall.elod@gmail.com">Elod</maintainer>
+  <maintainer email="sziddhant@gmail.com">Siddhant</maintainer>
   <license>BSD</license>
 
 

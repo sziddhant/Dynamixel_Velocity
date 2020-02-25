@@ -2,8 +2,8 @@
 
 <launch>
     <!-- Start joint speed controller wrist_pitch_speed_controller-->
-    <rosparam file="$(find cyton_multi_speed_dynamixel)/launch/JointSpeedController_2motors.yaml" command="load"/>
-    <node name="cyton_speed_controller_spawner" pkg="dynamixel_controllers" type="controller_spawner.py"
+    <rosparam file="$(find multi_speed_dynamixel)/launch/JointSpeedController_2motors.yaml" command="load"/>
+    <node name="speed_controller_spawner" pkg="dynamixel_controllers" type="controller_spawner.py"
           args="--manager=dxl_manager
                 --port speed_port
 		--type=simple
@@ -12,11 +12,11 @@
           output="screen"/>
 
   <!-- Start joint speed controller wrist_pitch_position_controller-->
-  <rosparam file="$(find cyton_multi_speed_dynamixel)/launch/MultiJointSpeedController.yaml" command="load"/>
-  <node name="cyton_multi_speed_controller_spawner" pkg="dynamixel_controllers" type="controller_spawner.py"
+  <rosparam file="$(find multi_speed_dynamixel)/launch/MultiJointSpeedController.yaml" command="load"/>
+  <node name="multi_speed_controller_spawner" pkg="dynamixel_controllers" type="controller_spawner.py"
         args="--manager=dxl_manager
               --type=meta
-              cyton_multi_joint_speed_controller
+              multi_joint_speed_controller
 	      wrist_pitch_speed_controller
               wrist_roll_speed_controller"
         output="screen"/>
