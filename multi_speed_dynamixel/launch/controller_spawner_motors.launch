@@ -2,13 +2,17 @@
 
 <launch>
     <!-- Start joint speed controller wrist_pitch_speed_controller-->
-    <rosparam file="$(find multi_speed_dynamixel)/launch/JointSpeedController_2motors.yaml" command="load"/>
+    <rosparam file="$(find multi_speed_dynamixel)/launch/JointSpeedController_motors.yaml" command="load"/>
     <node name="speed_controller_spawner" pkg="dynamixel_controllers" type="controller_spawner.py"
           args="--manager=dxl_manager
                 --port speed_port
 		--type=simple
-		wrist_pitch_speed_controller
-              	wrist_roll_speed_controller"
+		joint1_speed_controller
+              	joint2_speed_controller
+                  joint3_speed_controller
+                  joint4_speed_controller
+                  joint5_speed_controller
+                  joint6_speed_controller"
           output="screen"/>
 
   <!-- Start joint speed controller wrist_pitch_position_controller-->
@@ -17,7 +21,11 @@
         args="--manager=dxl_manager
               --type=meta
               multi_joint_speed_controller
-	      wrist_pitch_speed_controller
-              wrist_roll_speed_controller"
+	      joint1_speed_controller
+                  joint2_speed_controller
+                  joint3_speed_controller
+                  joint4_speed_controller
+                  joint5_speed_controller
+                  joint6_speed_controller"
         output="screen"/>
 </launch>
