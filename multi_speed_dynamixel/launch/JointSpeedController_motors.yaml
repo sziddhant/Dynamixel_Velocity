@@ -10,7 +10,7 @@ joint1_speed_controller:
         init: 0
         min: 0
         max: 0
-        minAngle: 1250
+        minAngle: 0
         maxAngle: 0
 
 joint2_speed_controller:
@@ -88,17 +88,3 @@ joint6_speed_controller:
         minAngle: 0
         maxAngle: 0
 
-        joint1_speed_controller:
-    controller:
-        package: dynamixel_controllers
-        module: joint_speed_controller
-        type: JointSpeedController
-    joint_name: joint6
-    joint_speed: 4.0
-    motor:
-        id: 6
-        init: 0
-        min: 0
-        max: 0
-        minAngle: 0
-        maxAngle: 0
