@@ -1,5 +1,0 @@
-<launch>        
-	<include file="$(find ax12_dynamixel_controller)/launch/controller_manager_1motor_poz.launch" />
-	<include file="$(find ax12_dynamixel_controller)/launch/controller_spawner_1motor_poz.launch" />	
-</launch>
-

@@ -1,6 +1,0 @@
-<launch>        
-	<include file="$(find cyton_multi_speed_dynamixel)/launch/controller_manager.launch" />
-	<include file="$(find cyton_multi_speed_dynamixel)/launch/controller_spawner.launch" />
-	
-</launch>
-

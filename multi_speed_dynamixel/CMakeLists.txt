@@ -1,14 +1,14 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(speedTester)
+project(multi_speed_dynamixel)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
+  dynamixel_controllers
   roscpp
   rospy
   std_msgs
-  dynamixel_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -102,8 +102,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES torqueTester
-#  CATKIN_DEPENDS roscpp rospy std_msgs
+#  LIBRARIES cyton_dynamixel
+#  CATKIN_DEPENDS dynamixel_controllers roscpp rospy std_msgs
 #  DEPENDS system_lib
 )
 
@@ -119,30 +119,24 @@ include_directories(
 )
 
 ## Declare a C++ library
-# add_library(torqueTester
-#   src/${PROJECT_NAME}/torqueTester.cpp
+# add_library(cyton_dynamixel
+#   src/${PROJECT_NAME}/cyton_dynamixel.cpp
 # )
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-# add_dependencies(torqueTester ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# add_dependencies(cyton_dynamixel ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-add_executable(${PROJECT_NAME}_log src/dataLogger.cpp)
-add_dependencies(${PROJECT_NAME}_log ${catkin_EXPORTED_TARGETS} )
-target_link_libraries(${PROJECT_NAME}_log ${ROS_LIBRARIES} ${catkin_LIBRARIES})
-
-add_executable(${PROJECT_NAME}_ctr src/controller.cpp)
-add_dependencies(${PROJECT_NAME}_ctr ${catkin_EXPORTED_TARGETS} )
-target_link_libraries(${PROJECT_NAME}_ctr ${ROS_LIBRARIES} ${catkin_LIBRARIES})
+# add_executable(cyton_dynamixel_node src/cyton_dynamixel_node.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-# add_dependencies(torqueTester_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# add_dependencies(cyton_dynamixel_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(torqueTester_node
+# target_link_libraries(cyton_dynamixel_node
 #   ${catkin_LIBRARIES}
 # )
 
@@ -161,7 +155,7 @@ target_link_libraries(${PROJECT_NAME}_ctr ${ROS_LIBRARIES} ${catkin_LIBRARIES})
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS torqueTester torqueTester_node
+# install(TARGETS cyton_dynamixel cyton_dynamixel_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -186,7 +180,7 @@ target_link_libraries(${PROJECT_NAME}_ctr ${ROS_LIBRARIES} ${catkin_LIBRARIES})
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_torqueTester.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_cyton_dynamixel.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

@@ -1,4 +1,4 @@
-cyton_multi_joint_speed_controller:
+multi_joint_speed_controller:
     controller:
         package: dynamixel_controllers
         module: joint_speed_controller_multi_motor
