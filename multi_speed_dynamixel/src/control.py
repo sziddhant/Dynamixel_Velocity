@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import rospy
 from dynamixel_msgs.msg._MotorVelocityArray import MotorVelocityArray
