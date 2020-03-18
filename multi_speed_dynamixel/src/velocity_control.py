@@ -1,21 +1,19 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
+## Dynamixel Velocity control in ROS using python
 
 import rospy
 from dynamixel_msgs.msg._MotorVelocityArray import MotorVelocityArray
-def talker():
+def motorVel(j1,j2):
     pub = rospy.Publisher('multi_joint_speed_controller/command',  MotorVelocityArray, queue_size=10)
     rospy.init_node('PythonController', anonymous=True)
-    r = rospy.Rate(10) #10hz
-    
-    while not rospy.is_shutdown():
-        vel=MotorVelocityArray()
-        vel.joint_name=["joint1","joint2"]
-        vel.vel_cmd= [0,0]
-        pub.publish(vel)
-        r.sleep()
+    vel=MotorVelocityArray()
+    vel.joint_name=["joint1","joint2"]
+    vel.vel_cmd= [j1,j2]
+    pub.publish(vel)
+
 
 if __name__ == '__main__':
     try:
-        talker()
+        motorVel(0,0)
     except rospy.ROSInterruptException:
         pass

@@ -4,7 +4,7 @@
   <version>0.0.0</version>
   <description>The multi_speed_dynamixel package containing the configuration files for velocity control.</description>
 
-  <maintainer email="sziddhant@gmail.com">Siddhant</maintainer>
+  <maintainer email="sziddhant@gmail.com">Siddhant Saoji</maintainer>
   <license>BSD</license>
 
 
