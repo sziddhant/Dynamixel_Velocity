@@ -1,0 +1,5 @@
+<launch>        
+	<include file="$(find multi_speed_dynamixel)/launch/controller_manager_motors.launch" />
+	<include file="$(find multi_speed_dynamixel)/launch/controller_spawner_motors.launch" />
+</launch>
+
