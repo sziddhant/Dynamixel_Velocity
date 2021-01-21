@@ -1,9 +1,9 @@
 # Velocity controller for Dynamixel motors in ROS
 
 This repository contains ROS packages to control dynamixel motors with velocity commands. It was tested on AX12-A, MX-28, and MX-64 motors. Tested with ROS Kinetic on Ubuntu 16.04. This pkg is a modified version of Dynamixel Velocity Controller by Előd Páll
-## PKG overview 
+## Package Overview 
 
-*velocity driver*: this is a modified dynamixel motor driver ([original source](https://github.com/arebgun/dynamixel_motor)), we extended with a velocity controller for a single motor `joint_speed_controller.py` and one for controlling multiple motor's velocities `joint_speed_controller_multi_motor.py`. The second one sends the command for each motor at the same time. This requires a spacial massage that contains two vector one with motor names and another with velocity cmd values, see `MotorVelocityArray.msg`. 
+*velocity driver*: It is a modified dynamixel motor driver ([original source](https://github.com/arebgun/dynamixel_motor)), extended with a velocity controller for a single motor using `joint_speed_controller.py` and one for controlling multiple motor's velocities `joint_speed_controller_multi_motor.py`. The second one sends the command for each motor at the same time. This requires a spacial massage that contains two vector one with motor names and another with velocity cmd values, see `MotorVelocityArray.msg`. 
 The motors must be in wheel mode (cw and ccw are set to 0). As this pkg collection is used on a robot arm where we have physical joint angle limits, we introduced a new parameter for upper and lower angle limits: `maxAngle` and `minAngle`. If the two parameters are equal, then the driver wont have any angle limitations so the motor can spin continuously.
 
 **multi_speed_dynamixel**: this creates the velocity control spanner and manager nodes, there is an examples for two motors. Note that the joint specification sets obligatory `min: 0` and `max: 0`, so the motors are used in wheel mode. Use `minAngle` and `maxAngle` to set joint angle limits. 
